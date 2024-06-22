@@ -33,7 +33,7 @@ public:
         int index = hashFunction(key);
         int originalIndex = index;
         while (states[index] == RESERVED) {
-            index = (index + 1) % size;
+            index = (hasFunction(key) + index + 1) % size;
             if (index == originalIndex) {
                 std::cerr << "Hash table is full" << std::endl;
                 return;
