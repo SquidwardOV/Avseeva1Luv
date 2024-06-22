@@ -34,7 +34,7 @@ public:
     // Поиск элемента в хэш-таблице
     bool search(int key) {
         int index = hashFunction(key);
-        for (int item : table[index]) {
+        for (int item : table[index]) { //проходимся по всей таблице
             if (item == key) {
                 return true;
             }
