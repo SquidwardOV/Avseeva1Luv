@@ -27,13 +27,18 @@ public:
         table.resize(size, -1); 
         states.resize(size, FREE); 
     }
-
+    int linearprob(int key, int i){
+        c = 31;
+        index = (hashFunction(key) + i * c) % size;
+    }
     // Вставка элемента в хэш-таблицу
     void insert(int key) {
         int index = hashFunction(key);
         int originalIndex = index;
         while (states[index] == RESERVED) {
-            index = (index + 1*const)) % size;
+            int i = 0;
+            index = linearprob(key, i);
+            ++i;
             if (index == originalIndex) {
                 std::cerr << "Hash table is full" << std::endl;
                 return;
