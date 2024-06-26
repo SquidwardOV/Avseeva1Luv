@@ -4,7 +4,6 @@
 class HashTable {
 private:
     std::vector<int> table;
-   
     int size;
 
     enum State {
@@ -24,41 +23,47 @@ public:
     // Конструктор
     HashTable(int size) {
         this->size = size;
-        table.resize(size, -1); 
-        states.resize(size, FREE); 
+        table.resize(size, -1);
+        states.resize(size, FREE);
     }
-    int linearprob(int key, int i){
-        c = 31;
-        index = (hashFunction(key) + i * c) % size;
+
+    int linearprob(int key, int i) {
+        int c = 31; 
+        int index = (hashFunction(key) + i * c) % size;
+        return index;
     }
+
     // Вставка элемента в хэш-таблицу
     void insert(int key) {
-        int index = hashFunction(key);
-        int originalIndex = index;
+        int i = 0;
+        int index = linearprob(key, i);
+
         while (states[index] == RESERVED) {
-            int i = 0;
-            index = linearprob(key, i);
             ++i;
-            if (index == originalIndex) {
+            index = linearprob(key, i);
+            if (i >= size) {
                 std::cerr << "Hash table is full" << std::endl;
                 return;
             }
         }
+
         table[index] = key;
         states[index] = RESERVED;
     }
 
     // Удаление элемента из хэш-таблицы
     void remove(int key) {
-        int index = hashFunction(key);
-        int originalIndex = index;
+        int i = 0;
+        int index = linearprob(key, i);
+
         while (states[index] != FREE) {
             if (states[index] == RESERVED && table[index] == key) {
                 states[index] = DELETED;
                 return;
             }
-            index = (index + 1) % size;
-            if (index == originalIndex) {
+            ++i;
+            index = linearprob(key, i);
+            if (i >= size) {
                 std::cerr << "Element not found" << std::endl;
                 return;
             }
@@ -68,14 +73,16 @@ public:
 
     // Поиск элемента в хэш-таблице
     bool search(int key) {
-        int index = hashFunction(key);
-        int originalIndex = index;
+        int i = 0;
+        int index = linearprob(key, i);
+
         while (states[index] != FREE) {
             if (states[index] == RESERVED && table[index] == key) {
                 return true;
             }
-            index = (index + 1) % size;
-            if (index == originalIndex) {
+            ++i;
+            index = linearprob(key, i);
+            if (i >= size) {
                 return false;
             }
         }
@@ -101,17 +108,17 @@ public:
 int main() {
     HashTable hashTable(10);
 
-    hashTable.insert(15); 
-    hashTable.insert(25); 
-    hashTable.insert(35); 
-    hashTable.insert(45); 
+    hashTable.insert(15);
+    hashTable.insert(25);
+    hashTable.insert(35);
+    hashTable.insert(45);
 
     hashTable.display();
 
     std::cout << "Search 25: " << (hashTable.search(25) ? "Found" : "Not Found") << std::endl;
     std::cout << "Search 50: " << (hashTable.search(50) ? "Found" : "Not Found") << std::endl;
 
-    hashTable.remove(25); 
+    hashTable.remove(25);
     hashTable.display();
 
     return 0;
